@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using Unity.Sentis;
+using UniRx;
 
 namespace Sample
 {
@@ -23,6 +25,9 @@ namespace Sample
         private float Interval = 0.2f;
         private float time = 0.0f;
         private Rect detectedObjectRect = new Rect(100, 100, 200, 100);
+        
+        private Subject<bool> isPersonDetected = new Subject<bool>();
+        public IObservable<bool> IsPersonDetected => isPersonDetected;
 
         private void Start()
         {
@@ -68,7 +73,15 @@ namespace Sample
 
             // Detect Objects
             var objects = model.Detect(input_texture, score_threshold, iou_threshold);
+            
+            if (objects.Count == 0)
+            {
+                isPersonDetected.OnNext(false);
+                return;
+            }
 
+            isPersonDetected.OnNext(true);
+            
             // Show Objects on Unity Console
             objects.ForEach(o => Debug.Log($"{o.class_id} {labels[o.class_id]} ({o.score:F2}) : {o.rect}"));
             
