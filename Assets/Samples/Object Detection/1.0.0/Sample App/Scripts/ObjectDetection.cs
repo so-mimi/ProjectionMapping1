@@ -73,19 +73,22 @@ namespace Sample
 
             // Detect Objects
             var objects = model.Detect(input_texture, score_threshold, iou_threshold);
+
+            // Show Objects on Unity Console
+            objects.ForEach(o => Debug.Log($"{o.class_id} {labels[o.class_id]} ({o.score:F2}) : {o.rect}"));
             
-            if (objects.Count == 0)
+            //o.class_idが0のものだけを取得
+            var personObjects = objects.FindAll(o => o.class_id == 0);
+            
+            if (personObjects.Count == 0)
             {
                 isPersonDetected.OnNext(false);
                 return;
             }
 
             isPersonDetected.OnNext(true);
-            
-            // Show Objects on Unity Console
-            objects.ForEach(o => Debug.Log($"{o.class_id} {labels[o.class_id]} ({o.score:F2}) : {o.rect}"));
-            
-            detectedObjectRect = objects[0].rect;
+
+            detectedObjectRect = personObjects[0].rect;
 
             imageController.SetImageToPeople(detectedObjectRect.x, detectedObjectRect.y, detectedObjectRect.width,
                 detectedObjectRect.height);
@@ -108,33 +111,7 @@ namespace Sample
             RenderTexture.active = null; // レンダリングを元の状態に戻します
             return texture;
         }
-        
-        private void OnGUI()
-        {
-            // 四角形を描画するためのスタイルを定義
-            GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
-            boxStyle.border = new RectOffset(2, 2, 2, 2); // 枠線の太さを設定
-            boxStyle.normal.textColor = Color.red; // 文字色
-            boxStyle.normal.background = MakeTex(2, 2, new Color(0f, 0f, 0f, 0f)); // 背景色（透明）
 
-            // 四角形を描画
-            GUI.Box(new Rect(detectedObjectRect.x, Screen.height - detectedObjectRect.y - detectedObjectRect.height, detectedObjectRect.width, detectedObjectRect.height), $"0 person (0.80)", boxStyle);
-        }
-        
-        // 一色のテクスチャを生成する補助関数
-        private Texture2D MakeTex(int width, int height, Color col)
-        {
-            Color[] pix = new Color[width * height];
-            for (int i = 0; i < pix.Length; i++)
-                pix[i] = col;
-
-            Texture2D result = new Texture2D(width, height);
-            result.SetPixels(pix);
-            result.Apply();
-
-            return result;
-        }
-        
         private void OnDestroy()
         {
             model?.Dispose();

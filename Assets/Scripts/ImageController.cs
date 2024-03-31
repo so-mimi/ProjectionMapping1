@@ -9,8 +9,8 @@ public class ImageController : MonoBehaviour
 {
     private RectTransform _rectTransform;
     [SerializeField] private ColliderController _colliderController;
-    [Header("大きくするほど左にいく"), SerializeField] private float offsetX = 0f;
-    [Header("大きくするほど下に行く"), SerializeField] private float offsetY = 0f;
+    [Header("大きくするほど右にいく"), SerializeField] private float offsetX = 0f;
+    [Header("大きくするほど上に行く"), SerializeField] private float offsetY = 0f;
     [Header("大きくするほど幅が広くなる"), SerializeField] private float widthOffset = 1f;
     [Header("大きくするほど高さが広くなる"), SerializeField] private float heightOffset = 1f;
 
