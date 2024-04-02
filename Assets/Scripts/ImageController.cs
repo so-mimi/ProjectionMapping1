@@ -13,6 +13,8 @@ public class ImageController : MonoBehaviour
     [Header("大きくするほど上に行く"), SerializeField] private float offsetY = 0f;
     [Header("大きくするほど幅が広くなる"), SerializeField] private float widthOffset = 1f;
     [Header("大きくするほど高さが広くなる"), SerializeField] private float heightOffset = 1f;
+    
+    [Header("頭上パーティクル"), SerializeField] private ParticleSystem _particleSystem;
 
     
     private void Start()
@@ -32,5 +34,6 @@ public class ImageController : MonoBehaviour
         
         //TODO: 衝突判定処理は依存関係を逆にしたいかも
         _colliderController.ReshapeCollider(rectTransformLocalPosition, width, height);
+        _particleSystem.transform.position = new Vector3(rectTransformLocalPosition.x, rectTransformLocalPosition.y + newHeight + 30f + offsetY, 0f);
     }
 }
